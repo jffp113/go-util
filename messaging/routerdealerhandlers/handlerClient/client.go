@@ -12,7 +12,7 @@ var logger = log.Logger("handler_client")
 
 const RegisterChanSize = 5
 
-type handlerClient struct {
+type HandlerClient struct {
 	requests            map[string]string
 	handlers            map[string]string
 	registerHandlerChan chan *pb.HandlerMessage
@@ -21,7 +21,7 @@ type handlerClient struct {
 	context             *zmq.Context
 }
 
-func NewHandlerFactory(uri string) (*handlerClient, error) {
+func NewHandlerFactory(uri string) (*HandlerClient, error) {
 	context, _ := zmq.NewContext()
 
 	conn, err := messaging.NewConnection(context, zmq.ROUTER, uri, true)
@@ -34,7 +34,7 @@ func NewHandlerFactory(uri string) (*handlerClient, error) {
 		return nil, err
 	}
 
-	c := handlerClient{
+	c := HandlerClient{
 		requests:            make(map[string]string),
 		handlers:            make(map[string]string),
 		registerHandlerChan: make(chan *pb.HandlerMessage, RegisterChanSize),
@@ -49,12 +49,12 @@ func NewHandlerFactory(uri string) (*handlerClient, error) {
 	return &c, nil
 }
 
-func (c *handlerClient) Close() error {
+func (c *HandlerClient) Close() error {
 	c.conn.Close()
 	return nil
 }
 
-func (c *handlerClient) receive() {
+func (c *HandlerClient) receive() {
 	poller := zmq.NewPoller()
 
 	poller.Add(c.conn.Socket(), zmq.POLLIN)
@@ -78,7 +78,7 @@ func (c *handlerClient) receive() {
 
 }
 
-func (c *handlerClient) processNewHandlers() {
+func (c *HandlerClient) processNewHandlers() {
 	worker, err := messaging.NewConnection(c.context, zmq.DEALER, "inproc://workers", false)
 
 	if err != nil {
@@ -115,7 +115,7 @@ func (c *handlerClient) processNewHandlers() {
 	}
 }
 
-func (c *handlerClient) handleConnSocket() {
+func (c *HandlerClient) handleConnSocket() {
 	handlerAddr, data, err := c.conn.RecvData()
 
 	if err != nil {
@@ -154,7 +154,7 @@ func (c *handlerClient) handleConnSocket() {
 	}
 }
 
-func (c *handlerClient) handleClientSocket() {
+func (c *HandlerClient) handleClientSocket() {
 	logger.Debug("Received data")
 
 	clientId, data, err := c.clients.RecvData()

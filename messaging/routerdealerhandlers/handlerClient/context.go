@@ -11,7 +11,7 @@ import (
 
 type context struct {
 	handlerId string
-	client    *handlerClient
+	client    *HandlerClient
 	worker    *messaging.ZmqConnection
 }
 
@@ -22,7 +22,7 @@ type Invoker interface {
 //GetContext gets a context similar to a factory
 //it returns a Invoker to to remote handler invocations
 //and a io.Closer to close the resources used afterwards
-func (c *handlerClient) GetContext(handlerId string) (Invoker, io.Closer) {
+func (c *HandlerClient) GetContext(handlerId string) (Invoker, io.Closer) {
 	worker, err := messaging.NewConnection(c.context, zmq.DEALER, "inproc://workers", false)
 
 	if err != nil {

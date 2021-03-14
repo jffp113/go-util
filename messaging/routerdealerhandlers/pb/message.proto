@@ -1,0 +1,45 @@
+syntax = "proto3";
+option java_multiple_files = true;
+option java_package = "sawtooth.sdk.protobuf";
+option go_package = "pb";
+
+// Handler message gives support to the router dealer
+// communication protocol. It also gives support to
+// the registration of new dealer handlers
+message HandlerMessage {
+
+    enum Type {
+        DEFAULT = 0;
+        HANDLER_REGISTER_REQUEST = 1002;
+        HANDLER_REGISTER_RESPONSE = 1003;
+    }
+
+    Type type = 1;
+
+    string correlation_id = 2;
+
+    bytes content = 3;
+    string handler_addr = 4;
+
+    string handler_id = 5;
+}
+
+// The registration request from the signer processor to the
+// signer node
+message HandlerRegisterRequest {
+
+    string handler_id = 1;
+
+}
+
+// A response sent from the signer node to the signer processor
+// acknowledging the registration
+message HandlerRegisterResponse {
+    enum Status {
+        STATUS_UNSET = 0;
+        OK = 1;
+        ERROR = 2;
+    }
+
+    Status status = 1;
+}

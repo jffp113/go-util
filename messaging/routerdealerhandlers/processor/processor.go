@@ -19,7 +19,7 @@ type Handler interface {
 	Name() string
 }
 
-type SignerProcessor struct {
+type HandlerProcessor struct {
 	uri      string
 	ids      map[string]string
 	handlers []Handler
@@ -27,8 +27,8 @@ type SignerProcessor struct {
 	maxQueue uint
 }
 
-func NewHandlerProcessor(uri string) *SignerProcessor {
-	return &SignerProcessor{
+func NewHandlerProcessor(uri string) *HandlerProcessor {
+	return &HandlerProcessor{
 		uri:      uri,
 		ids:      make(map[string]string),
 		handlers: make([]Handler, 0),
@@ -37,11 +37,11 @@ func NewHandlerProcessor(uri string) *SignerProcessor {
 	}
 }
 
-func (self *SignerProcessor) AddHandler(handler Handler) {
+func (self *HandlerProcessor) AddHandler(handler Handler) {
 	self.handlers = append(self.handlers, handler)
 }
 
-func (self *SignerProcessor) Start() error {
+func (self *HandlerProcessor) Start() error {
 
 	ctx, err := zmq.NewContext()
 	if err != nil {
@@ -51,7 +51,7 @@ func (self *SignerProcessor) Start() error {
 	return self.start(ctx)
 }
 
-func (self *SignerProcessor) start(ctx *zmq.Context) error {
+func (self *HandlerProcessor) start(ctx *zmq.Context) error {
 	logger.Info("Starting Signer Processor")
 	node, err := messaging.NewConnection(ctx, zmq.DEALER, self.uri, false)
 

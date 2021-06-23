@@ -34,10 +34,10 @@ func (c *HandlerClient) GetContext(handlerId string) (Invoker, io.Closer) {
 }
 
 //Invoke sends a message to a distributed component
-//msgType should not use 1000-1999 because they are reserved to this protocol
+//msgType should not use 1002-1999 because they are reserved to this protocol
 //returns response bytes, msg type response and and error if it is the case
 func (c *context) Invoke(request []byte,msgType int32) ([]byte, int32, error) {
-	if msgType >= 1000 && msgType <= 1999 {
+	if msgType >= 1002 && msgType <= 1999 {
 		return nil,0,errors.New(fmt.Sprintf("msgtype %v reserved to the protocol",msgType))
 	}
 
